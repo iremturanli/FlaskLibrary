@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Table</title>
+    <style>
+          @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,600);
+
+        *, *:before, *:after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        }
+
+        body {
+        background-image: url("https://images.pexels.com/photos/1631677/pexels-photo-1631677.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260");
+        height: 100%; 
+        font-family: 'Cambria', sans-serif;
+        }
+        table {
+        background: #cac8b7;
+        border-radius: 0.25em;
+        border-collapse: collapse;
+        margin: 175px auto;
+        opacity: 0.6;
+        }
+        th {
+
+        border-bottom: 1px solid #aa9e9e;
+        background-color:  #d09a68 ;
+        font-size: 1.00em;
+        font-weight: bold;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif,bold;  
+        padding: 0.5em 1em;
+        text-align: center;
+      
+        }
+        td {
+        font-size:  0.96em;
+        font-weight: 600;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        padding: 0.50em 1em;
+        border-bottom: 1px solid #cccccc;
+        text-align: center;
+        
+        }
+        .disabled td {
+        color: #4F5F64;
+        }
+        
+        tr:hover {background-color: rgb(177, 163, 163);}
+
+        tbody tr {
+        transition:0.25s ease;
+        }
+
+.logout {
+  background:url('https://dh3vbjnk0bnfa.cloudfront.net/static/centralauth/images/btn-login-hover.png') no-repeat 5px 5px #484B4F;
+  width: 100px;
+  cursor:pointer;
+  border-radius:50px;
+  padding:10px 20px 10px 0;
+  color:White;
+  font-size:14px;
+  text-align:left;
+  text-indent:40px;
+  display:block;
+  margin:0 auto;
+  background-color: rgb(38, 83, 99);
+  position:fixed;
+  right:50px;
+
+
+ 
+  /* Animations: */
+  -webkit-transition-timing-function: ease-in-out;
+  -webkit-transition-duration: .4s;
+  -webkit-transition-property: all;
+  
+  -moz-transition-timing-function: ease-in-out;
+  -moz-transition-duration: .4s;
+  -moz-transition-property: all;
+}
+
+.logout:hover {
+  background-image: url( 'https://dh3vbjnk0bnfa.cloudfront.net/static/centralauth/images/btn-login.png' );
+  background-position: 65px 5px;
+  text-indent: 15px;  
+}
+
+    </style>
+</head>
+  <pre>
+  <input type="button" onclick="window.open('http://127.0.0.1:5000/')" value="Logout" class="logout"/>
+  </pre>
+ 
+<body>
+   
+     <table>
+       
+        <thead>
+          <tr>
+            <th>Book ID</th>
+			    <th>Date</th>
+				<th>Library_id</th>
+				<th>Info</th>
+				<th>Name</th>
+				<th>Old Version</th>
+				<th>New Version</th>
+            </tr>
+        </thead>
+    <tbody>
+
+          <tr>
+        {% for veri in logrecords %}
+			<td>{{veri.BookID_log}}</td>
+			<td>{{veri.Date}}</td>
+			<td>{{veri.Library_id}}</td>
+			<td>{{veri.Info}}</td>
+			<td>{{veri.Name}}</td>
+			<td>{{veri.OldVersion}} </td>
+			<td>{{veri.NewVersion}} </td>
+
+        </tr>
+        {%endfor%}
+
+        </tbody>
+      </table>
+</body>
+</html>
+
+
