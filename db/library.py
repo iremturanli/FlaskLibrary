@@ -68,7 +68,7 @@ class Log(db.Model):
 
 
 db.create_all()
-
+##addhtmlye gonder
 books=Library.query.all()
 logrecords=Log.query.all()
 

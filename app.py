@@ -1,5 +1,6 @@
 from flask import Flask,render_template,url_for,redirect
 from flask import Flask
+from werkzeug import useragents
 from flask_sqlalchemy import SQLAlchemy 
 from flask import request
 from db.library import Library, books,logrecords
@@ -11,7 +12,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
 
 
 db=SQLAlchemy(app)
-sifreleyici = hasher.sha224()
+
 
 
 
@@ -23,13 +24,10 @@ def index():
 
             isim=request.form.get('name')
             password=request.form.get('passw')
-            sifreleyici.update(password.encode())
-            cikti=sifreleyici.hexdigest()
+            # sifreleyici.update(password.encode())
+            # cikti=sifreleyici.hexdigest()
+            cikti=hasher.sha224(password.encode()).hexdigest()
            
-            
-            print(cikti)
-         
-            
             uye=Uye.query.filter_by(uye_kullaniciadi=isim,uye_sifre=cikti).first()
 
             if uye.uye_kullaniciadi==isim and uye.uye_sifre==cikti:
@@ -45,16 +43,24 @@ def index():
         mesaj="Hatalı giriş,Tekrar deneyiniz."
         return render_template("index.html",mesaj=mesaj)
 
+
+@app.route("/signup",methods=["GET","POST"])
+def signup():
+        username=request.form.get('uname')
+        print(username)
+  
+    
+        return render_template("signup.html")
+
         
 @app.route("/add",methods=["GET"]) 
 def add():
     
     uyeler=Uye.query.all()
-  
     return render_template("add.html",books=books,uye=uyeler)
 
 
-@app.route("/log",methods=["GET"])
+@app.route("/log",methods=["GET","POST"])
 def log():
     return render_template("log.html",logrecords=logrecords)
 
@@ -67,9 +73,10 @@ def access():
         
             isim=request.form.get('name')
             sifre=request.form.get('psw')
-            print(access)
-            uye=Uye.query.filter_by(uye_kullaniciadi=isim,uye_sifre=sifre).first()
-            if uye.uye_kullaniciadi==isim and uye.uye_sifre==sifre and uye.uye_durum==True:
+            cikti=hasher.sha224(sifre.encode()).hexdigest()
+           
+            uye=Uye.query.filter_by(uye_kullaniciadi=isim,uye_sifre=cikti).first()
+            if uye.uye_kullaniciadi==isim and uye.uye_sifre==cikti and uye.uye_durum==True:
                 return redirect(url_for('log'))
             else:
                 mesaj="Bu sayfaya erişiminiz bulunmamaktadır."
@@ -108,9 +115,7 @@ db.create_all()
    
 # iremt=Uye(uye_kullaniciadi="iremt",uye_sifre="1234567890",uye_durum=1)
 # print(iremt.uye_sifre)
-# sifreleyici.update(iremt.uye_sifre.encode())
-# cikti=sifreleyici.hexdigest()
-# iremt.uye_sifre=cikti
+# iremt.uye_sifre=hasher.sha224(iremt.uye_sifre.encode()).hexdigest()
 # iremt.addClass()
    
 # user=Uye(uye_kullaniciadi="user",uye_sifre="12345",uye_durum=0)
