@@ -1,9 +1,8 @@
 from flask import Flask,render_template,url_for,redirect
 from flask import Flask
-from werkzeug import useragents
 from flask_sqlalchemy import SQLAlchemy 
 from flask import request
-from db.library import Library, books,logrecords
+from db.library import Library,Log,books,logrecords
 import hashlib as hasher
 
 app=Flask(__name__)
@@ -13,10 +12,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
 
 db=SQLAlchemy(app)
 
-
-
-
-
 @app.route("/",methods=["GET","POST"])
 def index():
     try:
@@ -24,8 +19,6 @@ def index():
 
             isim=request.form.get('name')
             password=request.form.get('passw')
-            # sifreleyici.update(password.encode())
-            # cikti=sifreleyici.hexdigest()
             cikti=hasher.sha224(password.encode()).hexdigest()
            
             uye=Uye.query.filter_by(uye_kullaniciadi=isim,uye_sifre=cikti).first()
@@ -44,14 +37,39 @@ def index():
         return render_template("index.html",mesaj=mesaj)
 
 
+
 @app.route("/signup",methods=["GET","POST"])
 def signup():
+    if request.method=="POST":
         username=request.form.get('uname')
-        print(username)
-  
+        password=request.form.get('psword')
+        cikti=hasher.sha224(password.encode()).hexdigest()
+        if 'status' in request.form:
+            status=request.form['status']
     
+        member=Uye(uye_kullaniciadi=username,uye_sifre=cikti,uye_durum=status)
+        if member.uye_durum=='1':
+            member.uye_durum=True
+            mesaj="Your account has been successfully created!"
+            member.addClass()
+            
+            return render_template("signup.html",mesaj=mesaj)
+            #  return redirect(url_for('index'))
+    
+        else:
+            member.uye_durum=False
+            mesaj="Your account has been successfully created!"
+            member.addClass()
+    
+            return render_template("signup.html",mesaj=mesaj)
+        #    return redirect(url_for('index'))
+
+    else:
         return render_template("signup.html")
 
+
+      
+    
         
 @app.route("/add",methods=["GET"]) 
 def add():
@@ -77,7 +95,7 @@ def access():
            
             uye=Uye.query.filter_by(uye_kullaniciadi=isim,uye_sifre=cikti).first()
             if uye.uye_kullaniciadi==isim and uye.uye_sifre==cikti and uye.uye_durum==True:
-                return redirect(url_for('log'))
+                return redirect(url_for('admin'))
             else:
                 mesaj="Bu sayfaya erişiminiz bulunmamaktadır."
                 return render_template("access.html",mesaj=mesaj)
@@ -91,6 +109,23 @@ def access():
          return render_template('access.html',mesaj=mesaj)
 
 
+@app.route("/admin")
+def admin():
+    return render_template("admin.html",books=books)
+
+
+@app.route("/add/delete/<string:id>",methods=["GET","POST"])
+def adminDelete(id):
+
+    DeleteBooks=db.session.query(Library).filter(Library.BookID==id).first()
+    db.session.delete(DeleteBooks)
+    db.session.commit()
+
+    lg=Log(Library_id=id,Info='Book Deleted',Name=None,OldVersion=None,NewVersion=None)
+    lg.addClass()
+
+
+    return redirect(url_for('admin'))
 
 
 class Uye(db.Model):
@@ -113,28 +148,7 @@ class Uye(db.Model):
 db.create_all()
 
    
-# iremt=Uye(uye_kullaniciadi="iremt",uye_sifre="1234567890",uye_durum=1)
-# print(iremt.uye_sifre)
-# iremt.uye_sifre=hasher.sha224(iremt.uye_sifre.encode()).hexdigest()
-# iremt.addClass()
-   
-# user=Uye(uye_kullaniciadi="user",uye_sifre="12345",uye_durum=0)
-# sifreleyici.update(user.uye_sifre.encode())
-# cikti=sifreleyici.hexdigest()
-# user.uye_sifre=cikti
-# user.addClass()
-   
 
-# members=Uye.query.all()
-# for i in range(len(members)):
-#     sifreler=members[i].uye_sifre
-#     sifreleyici.update(sifreler.encode())
-#     cikti=sifreleyici.hexdigest()
-#     print(cikti)
-#     members[i].uye_sifre=cikti
-#     db.session.commit()
- 
-   
 
 
 

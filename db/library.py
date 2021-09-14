@@ -54,17 +54,9 @@ class Log(db.Model):
         self.NewVersion=NewVersion
 
     def addClass(self):
-
-        # l1=Library(BookName,Yearofpublication,AuthorName,Category,Addp)
         db.session.add(self)
         db.session.commit()
 
-
-    # def addClass(Library_id,Info,Name,OldVersion,NewVersion):
-    
-    #     lg1=Log(Library_id,Info,Name,OldVersion,NewVersion)
-    #     db.session.add(lg1)
-    #     db.session.commit()
 
 
 db.create_all()
