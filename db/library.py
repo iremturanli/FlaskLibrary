@@ -4,7 +4,7 @@ import datetime
 
 app=Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI']='sqlite:////home/turkai/Masaüstü/workplace/Flask/library/flasklibrary/db/library.db'
+app.config['SQLALCHEMY_DATABASE_URI']='sqlite:////home/turkai/Masaüstü/workplace/Flask/library/flasklibrarymodify/db/library.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False 
 
 db=SQLAlchemy(app)
@@ -29,8 +29,6 @@ class Library(db.Model):
 
 
     def addClass(self):
-
-        # l1=Library(BookName,Yearofpublication,AuthorName,Category,Addp)
         db.session.add(self)
         db.session.commit()
 
@@ -39,7 +37,7 @@ class Log(db.Model):
 
     BookID_log=db.Column(db.Integer,primary_key=True)
     Date=db.Column(db.String,nullable=False)
-    Library_id=db.Column(db.Integer,db.ForeignKey('library.BookID'),nullable=False)
+    Library_id=db.Column(db.Integer,db.ForeignKey('library.BookID'))
     Info=db.Column(db.String)
     Name=db.Column(db.String)
     OldVersion=db.Column(db.String)
@@ -60,6 +58,7 @@ class Log(db.Model):
 
 
 db.create_all()
+
 ##addhtmlye gonder
 books=Library.query.all()
 logrecords=Log.query.all()
@@ -87,7 +86,7 @@ def delete(key):
     db.session.commit()
 
 # add("Casper",1778,"John","Korku","İrem")
-# # add("Sefiller",2000,"Victor Hugo","Dram","Berk")
+# add("Sefiller",2000,"Victor Hugo","Dram","Berk")
 # add("1asd",2015,"Selena","Political","Fatma")
 # add("1asd",1990,"Mona","Bilim","Sena")
-# delete(4)
+# # delete(4)

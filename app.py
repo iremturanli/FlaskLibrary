@@ -2,6 +2,7 @@ from flask import Flask,render_template,url_for,redirect
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy 
 from flask import request
+from db.library import *
 from db.library import Library,Log,books,logrecords
 import hashlib as hasher
 
@@ -117,17 +118,16 @@ def admin():
 @app.route("/add/delete/<string:id>",methods=["GET","POST"])
 def adminDelete(id):
 
-    DeleteBooks=db.session.query(Library).filter(Library.BookID==id).first()
-    db.session.delete(DeleteBooks)
+    db.session.query(Library).filter(Library.BookID==id).delete()
     db.session.commit()
-
     lg=Log(Library_id=id,Info='Book Deleted',Name=None,OldVersion=None,NewVersion=None)
     lg.addClass()
-
+    db.session.commit()
+    # return render_template("admin.html",books=books)
 
     return redirect(url_for('admin'))
 
-
+    
 class Uye(db.Model):
 
     uye_id=db.Column(db.Integer,primary_key=True)
