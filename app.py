@@ -70,7 +70,6 @@ def signup():
 
 
       
-    
         
 @app.route("/add",methods=["GET"]) 
 def add():
@@ -124,9 +123,35 @@ def adminDelete(id):
     lg.addClass()
     db.session.commit()
     # return render_template("admin.html",books=books)
-
     return redirect(url_for('admin'))
 
+
+
+@app.route("/add/update/<string:id>",methods=["POST","GET"])
+def adminUpdate(id):
+    if request.method=="POST":
+        UpdateBookName=request.values.get('bname')
+        UpdateYear=request.values.get('yname')
+        UpdateAuthorName=request.values.get('aname')
+        UpdateCategory=request.values.get('cname')
+        UpdatePerson=request.values.get('pname')
+        print(UpdateCategory)
+        print(UpdatePerson)
+        print(UpdateBookName)
+
+        l1=db.session.query(Library).filter(Library.BookID==id).one()
+        l1.BookName=UpdateBookName
+        l1.Yearofpublication=UpdateYear
+        l1.AuthorName=UpdateAuthorName
+        l1.Category=UpdateCategory
+        l1.Addp=UpdatePerson
+        db.session.commit()
+        return render_template('update.html')
+    else:
+        return render_template('update.html')
+
+    # else:
+    #     return render_template('update.html')
     
 class Uye(db.Model):
 
