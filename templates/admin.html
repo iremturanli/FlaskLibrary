@@ -156,7 +156,6 @@ a {
 		  {%for admin in admins%}
           <input type="radio" value={{admin.uye_kullaniciadi}} name="select" checked/>
 		  <label for="select" class="radio">{{admin.uye_kullaniciadi}}</label>
-		
             </div>
 			{%endfor%}
 			<br>
@@ -164,8 +163,6 @@ a {
 			<input type="submit" value="submit" href="http://127.0.0.1:5000/admin">
 		  </form>
 		  <div class="alert alert-primary" role="alert">
-
-			
 			Welcome to admin page {{selectAdmin}},You can delete or update data.
 	
 		{% for veri in books %}

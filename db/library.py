@@ -80,4 +80,3 @@ def add(BookName,Yearofpublication,AuthorName,Category,Addp):
 # add("Sefiller",2000,"Victor Hugo","Dram","Berk")
 # add("1asd",2015,"Selena","Political","Fatma")
 # add("1asd",1990,"Mona","Bilim","Sena")
-# # delete(4)

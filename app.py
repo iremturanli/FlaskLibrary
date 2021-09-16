@@ -109,6 +109,7 @@ def access():
          return render_template('access.html',message=message)
 
 
+
 @app.route("/admin", methods=["POST","GET"])
 def admin():
     admins=db.session.query(Uye).filter(Uye.uye_durum==True).all()
@@ -119,7 +120,6 @@ def admin():
  
 
 
-
     return render_template("admin.html",books=books,admins=admins)
 
 
@@ -128,11 +128,10 @@ def adminDelete(id):
    
     db.session.query(Library).filter(Library.BookID==id).delete()
     db.session.commit()
-    lg=Log(Library_id=id,Info='Book Deleted',Name=None,OldVersion=None,NewVersion=None)
+    lg=Log(Library_id=id,Info='Book Deleted',Name=None,OldVersion=None,NewVersion=None)#ismial
     lg.addClass()
     db.session.commit()
     return redirect(url_for('admin'))
-
 
 
 @app.route("/add/update/<string:id>",methods=["POST","GET"])
@@ -143,8 +142,6 @@ def adminUpdate(id):
     oldAuthorname=olddata.AuthorName
     oldCategory=olddata.Category
     oldAddp=olddata.Addp
-
-
 
     if request.method=="POST":
         UpdateBookName=request.values.get('bname')
@@ -167,8 +164,7 @@ def adminUpdate(id):
     else:
         return render_template('update.html')
 
-    # else:
-    #     return render_template('update.html')
+
 
 class Uye(db.Model):
 
@@ -188,10 +184,6 @@ class Uye(db.Model):
         db.session.commit()
 
 db.create_all()
-
-
-
-
 
 
 if __name__=="__main__":
