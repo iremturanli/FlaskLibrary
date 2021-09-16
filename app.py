@@ -1,6 +1,6 @@
 from flask import Flask,render_template,url_for,redirect
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy 
+from flask_sqlalchemy import SQLAlchemy
 from flask import request
 from db.library import *
 from db.library import Library,Log,books,logrecords
@@ -8,7 +8,7 @@ import hashlib as hasher
 
 app=Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI']='sqlite:////home/turkai/Masaüstü/workplace/Flask/library/flasklibrarymodify/db/library.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False 
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
 
 
 db=SQLAlchemy(app)
@@ -18,24 +18,24 @@ def index():
     try:
         if request.method == 'POST':
 
-            isim=request.form.get('name')
+            name=request.form.get('name')
             password=request.form.get('passw')
             cikti=hasher.sha224(password.encode()).hexdigest()
-           
-            uye=Uye.query.filter_by(uye_kullaniciadi=isim,uye_sifre=cikti).first()
 
-            if uye.uye_kullaniciadi==isim and uye.uye_sifre==cikti:
+            uye=Uye.query.filter_by(uye_kullaniciadi=name,uye_sifre=cikti).first()
+
+            if uye.uye_kullaniciadi==name and uye.uye_sifre==cikti:
                 return redirect(url_for('add'))
 
             else:
-                mesaj="Hatalı giriş!,Tekrar deneyiniz."
-                return render_template("index.html",mesaj=mesaj)            
-        else:  
-                 mesaj="Hoşgeldiniz."
-                 return render_template("index.html",mesaj=mesaj)
+                message="Wrong username or password,Try again."
+                return render_template("index.html",message=message)
+        else:
+                 message="Welcome."
+                 return render_template("index.html",message=message)
     except:
-        mesaj="Hatalı giriş,Tekrar deneyiniz."
-        return render_template("index.html",mesaj=mesaj)
+        message="Wrong username or password,Try again."
+        return render_template("index.html",message=message)
 
 
 
@@ -47,21 +47,21 @@ def signup():
         cikti=hasher.sha224(password.encode()).hexdigest()
         if 'status' in request.form:
             status=request.form['status']
-    
+
         member=Uye(uye_kullaniciadi=username,uye_sifre=cikti,uye_durum=status)
         if member.uye_durum=='1':
             member.uye_durum=True
             mesaj="Your account has been successfully created!"
             member.addClass()
-            
+
             return render_template("signup.html",mesaj=mesaj)
             #  return redirect(url_for('index'))
-    
+
         else:
             member.uye_durum=False
             mesaj="Your account has been successfully created!"
             member.addClass()
-    
+
             return render_template("signup.html",mesaj=mesaj)
         #    return redirect(url_for('index'))
 
@@ -69,11 +69,11 @@ def signup():
         return render_template("signup.html")
 
 
-      
-        
-@app.route("/add",methods=["GET"]) 
+
+
+@app.route("/add",methods=["GET"])
 def add():
-    
+
     uyeler=Uye.query.all()
     return render_template("add.html",books=books,uye=uyeler)
 
@@ -82,62 +82,76 @@ def add():
 def log():
     return render_template("log.html",logrecords=logrecords)
 
-  
+
 @app.route("/access",methods=["GET","POST"])
 def access():
-    
-    try:  
+
+    try:
         if request.method == 'POST':
-        
-            isim=request.form.get('name')
-            sifre=request.form.get('psw')
-            cikti=hasher.sha224(sifre.encode()).hexdigest()
-           
-            uye=Uye.query.filter_by(uye_kullaniciadi=isim,uye_sifre=cikti).first()
-            if uye.uye_kullaniciadi==isim and uye.uye_sifre==cikti and uye.uye_durum==True:
+
+            name=request.form.get('name')
+            password=request.form.get('psw')
+            cikti=hasher.sha224(password.encode()).hexdigest()
+
+            uye=Uye.query.filter_by(uye_kullaniciadi=name,uye_sifre=cikti).first()
+            if uye.uye_kullaniciadi==name and uye.uye_sifre==cikti and uye.uye_durum==True:
                 return redirect(url_for('admin'))
             else:
-                mesaj="Bu sayfaya erişiminiz bulunmamaktadır."
-                return render_template("access.html",mesaj=mesaj)
+                message="You do not have permission to access."
+                return render_template("access.html",message=message)
         else:
-            mesaj="Yönetici sayfasına hoşgeldiniz."
-            return render_template("access.html",mesaj=mesaj)
-              
-
-    except:    
-         mesaj="Hatalı giriş,tekrar deneyiniz."
-         return render_template('access.html',mesaj=mesaj)
+            message="Welcome to admin page!"
+            return render_template("access.html",message=message)
 
 
-@app.route("/admin")
+    except:
+         message="Wrong password or username."
+         return render_template('access.html',message=message)
+
+
+@app.route("/admin", methods=["POST","GET"])
 def admin():
-    return render_template("admin.html",books=books)
+    admins=db.session.query(Uye).filter(Uye.uye_durum==True).all()
+
+    if request.method=="POST":
+        selectAdmin=request.form.get('select')
+        return render_template("admin.html",selectAdmin=selectAdmin,books=books)
+ 
+
+
+
+    return render_template("admin.html",books=books,admins=admins)
 
 
 @app.route("/add/delete/<string:id>",methods=["GET","POST"])
 def adminDelete(id):
-
+   
     db.session.query(Library).filter(Library.BookID==id).delete()
     db.session.commit()
     lg=Log(Library_id=id,Info='Book Deleted',Name=None,OldVersion=None,NewVersion=None)
     lg.addClass()
     db.session.commit()
-    # return render_template("admin.html",books=books)
     return redirect(url_for('admin'))
 
 
 
 @app.route("/add/update/<string:id>",methods=["POST","GET"])
 def adminUpdate(id):
+    olddata=db.session.query(Library).filter(Library.BookID==id).one()
+    oldBookname=olddata.BookName
+    oldYearofPublication=olddata.Yearofpublication
+    oldAuthorname=olddata.AuthorName
+    oldCategory=olddata.Category
+    oldAddp=olddata.Addp
+
+
+
     if request.method=="POST":
         UpdateBookName=request.values.get('bname')
         UpdateYear=request.values.get('yname')
         UpdateAuthorName=request.values.get('aname')
         UpdateCategory=request.values.get('cname')
         UpdatePerson=request.values.get('pname')
-        print(UpdateCategory)
-        print(UpdatePerson)
-        print(UpdateBookName)
 
         l1=db.session.query(Library).filter(Library.BookID==id).one()
         l1.BookName=UpdateBookName
@@ -146,13 +160,16 @@ def adminUpdate(id):
         l1.Category=UpdateCategory
         l1.Addp=UpdatePerson
         db.session.commit()
+        lg=Log(Library_id=id,Info='Book updated',Name=None,OldVersion="{},{},{},{},{}".format(oldBookname,oldYearofPublication,oldAuthorname,oldCategory,oldAddp),NewVersion="{},{},{},{},{}".format(UpdateBookName,UpdateYear,UpdateAuthorName,UpdateCategory,UpdatePerson))
+        lg.addClass()
+        db.session.commit()
         return render_template('update.html')
     else:
         return render_template('update.html')
 
     # else:
     #     return render_template('update.html')
-    
+
 class Uye(db.Model):
 
     uye_id=db.Column(db.Integer,primary_key=True)
@@ -172,7 +189,7 @@ class Uye(db.Model):
 
 db.create_all()
 
-   
+
 
 
 

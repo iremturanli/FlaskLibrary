@@ -114,6 +114,7 @@ a {
 
 </style>
 </head>
+
 <div class="navigation">
   
 	<a class="button" href="http://127.0.0.1:5000/">
@@ -127,14 +128,14 @@ a {
 
 <body>
 
+
+
 	<div style="margin-Top:95px;" class="container">
 		<center><h3><b>LIBRARY</h3></b></center>
-		 <hr>
-		 
-
-		 <table class="table">
 		<a href="http://127.0.0.1:5000/log">Log records</a> 
+		 <hr>
 	
+		 <table class="table">	
 		<table>
 
 		<tr>
@@ -150,6 +151,23 @@ a {
 		</tr>
 
 		<tr>
+		<form  action="/admin" method="POST">
+		   <div class="admins">
+		  {%for admin in admins%}
+          <input type="radio" value={{admin.uye_kullaniciadi}} name="select" checked/>
+		  <label for="select" class="radio">{{admin.uye_kullaniciadi}}</label>
+		
+            </div>
+			{%endfor%}
+			<br>
+
+			<input type="submit" value="submit" href="http://127.0.0.1:5000/admin">
+		  </form>
+		  <div class="alert alert-primary" role="alert">
+
+			
+			Welcome to admin page {{selectAdmin}},You can delete or update data.
+	
 		{% for veri in books %}
 			<td>{{veri.BookID}}</td>
 			<td>{{veri.BookName}}</td>
@@ -159,7 +177,8 @@ a {
 			<td>{{veri.Addp}} </td>
 			<td><a href="/add/update/{{veri.BookID}}" class="btn btn-danger">Update</a></td>
             <td><a href="/add/delete/{{veri.BookID}}" class="btn btn-danger">Delete</a></td>  
-
+		
+		</div>
 		</tr>
 			{%endfor%}
 	

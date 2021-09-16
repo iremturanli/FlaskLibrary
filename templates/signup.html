@@ -125,11 +125,11 @@
         <label for="psw"><strong>Password</strong></label>
         <input type="password" name="psword" placeholder="Enter Password" required>
       </div>
-      <button type="submit" href="http://127.0.0.1:5000/"><strong>SIGN UP</strong></button>            
+      <button type="submit"> <a href= {{ url_for('index') }} ><strong>SIGN UP</strong></button>            
         <label style="padding-left: 30px">
-        <input type="button" class="btn btn-primary" href="/" name="Sign in"> 
+        <!-- <input type="button" class="btn btn-primary"> <a href= {{ url_for('index') }} name="Sign in"> 
        Sign in
-        </label>
+        </label> -->
         
       </div>
     </form>

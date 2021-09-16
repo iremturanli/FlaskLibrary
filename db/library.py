@@ -76,15 +76,6 @@ def add(BookName,Yearofpublication,AuthorName,Category,Addp):
     lg.addClass()
 
 
-
-def delete(key):
-    Person=input("Name: ")
-    db.session.query(Library).filter(Library.BookID==key).delete()
-    lg=Log(Library_id=key,Info='Book Deleted',Name=Person,OldVersion=None,NewVersion=None)
-    lg.addClass()
-
-    db.session.commit()
-
 # add("Casper",1778,"John","Korku","İrem")
 # add("Sefiller",2000,"Victor Hugo","Dram","Berk")
 # add("1asd",2015,"Selena","Political","Fatma")
