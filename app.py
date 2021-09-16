@@ -24,8 +24,10 @@ def index():
 
             uye=Uye.query.filter_by(uye_kullaniciadi=name,uye_sifre=cikti).first()
 
-            if uye.uye_kullaniciadi==name and uye.uye_sifre==cikti:
+            if uye.uye_kullaniciadi==name and uye.uye_sifre==cikti and uye.uye_durum==True:
                 return redirect(url_for('add'))
+            elif uye.uye_kullaniciadi==name and uye.uye_sifre==cikti and uye.uye_durum==False:
+                return render_template("adduser.html",books=books)
 
             else:
                 message="Wrong username or password,Try again."
@@ -36,6 +38,7 @@ def index():
     except:
         message="Wrong username or password,Try again."
         return render_template("index.html",message=message)
+
 
 
 
@@ -67,9 +70,6 @@ def signup():
 
     else:
         return render_template("signup.html")
-
-
-
 
 @app.route("/add",methods=["GET"])
 def add():
