@@ -2,14 +2,17 @@ from flask import Flask,render_template,url_for,redirect
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask import request
-from db.library import *
 from db.library import Library,Log,books,logrecords
 import hashlib as hasher
+from flask_session import Session
 
 app=Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI']='sqlite:////home/turkai/Masaüstü/workplace/Flask/library/flasklibrarymodify/db/library.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
 
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
 db=SQLAlchemy(app)
 
@@ -33,7 +36,7 @@ def index():
                 message="Wrong username or password,Try again."
                 return render_template("index.html",message=message)
         else:
-                 message="Welcome."
+                 message="Welcome!"
                  return render_template("index.html",message=message)
     except:
         message="Wrong username or password,Try again."
@@ -71,11 +74,14 @@ def signup():
     else:
         return render_template("signup.html")
 
+
+
 @app.route("/add",methods=["GET"])
 def add():
 
     uyeler=Uye.query.all()
-    return render_template("add.html",books=books,uye=uyeler)
+    return render_template("add.html",books=books)
+
 
 
 @app.route("/log",methods=["GET","POST"])
@@ -122,6 +128,25 @@ def admin():
 
     return render_template("admin.html",books=books,admins=admins)
 
+@app.route("/addBook",methods=["POST","GET"])
+def addBook():
+    if request.method=="POST":
+        BookName=request.form.get("bookname")
+        Year=request.form.get("year")
+        AuthorName=request.form.get("authorname")
+        Category=request.form.get("category")
+        Person=request.form.get("person")
+
+        l1=Library(BookName=BookName,Yearofpublication=Year,AuthorName=AuthorName,Category=Category,Addp=Person)
+        l1.addClass()
+        lg=Log(Library_id=l1.BookID,Info="Book added",Name=Person,OldVersion=None,NewVersion=BookName)
+        lg.addClass()
+        db.session.commit()
+        return redirect(url_for('admin'))
+
+    else:
+        return render_template("addBooks.html")
+
 
 @app.route("/add/delete/<string:id>",methods=["GET","POST"])
 def adminDelete(id):
@@ -136,6 +161,7 @@ def adminDelete(id):
 
 @app.route("/add/update/<string:id>",methods=["POST","GET"])
 def adminUpdate(id):
+ 
     olddata=db.session.query(Library).filter(Library.BookID==id).one()
     oldBookname=olddata.BookName
     oldYearofPublication=olddata.Yearofpublication
@@ -160,7 +186,7 @@ def adminUpdate(id):
         lg=Log(Library_id=id,Info='Book updated',Name=None,OldVersion="{},{},{},{},{}".format(oldBookname,oldYearofPublication,oldAuthorname,oldCategory,oldAddp),NewVersion="{},{},{},{},{}".format(UpdateBookName,UpdateYear,UpdateAuthorName,UpdateCategory,UpdatePerson))
         lg.addClass()
         db.session.commit()
-        return render_template('update.html')
+        return redirect(url_for('admin'))
     else:
         return render_template('update.html')
 

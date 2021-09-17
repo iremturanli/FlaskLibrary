@@ -63,20 +63,3 @@ db.create_all()
 books=Library.query.all()
 logrecords=Log.query.all()
 
-
-
-# l1=Library(BookName="Küçük Prens",Yearofpublication=2000,AuthorName="Ali",Category="Dram",Addp="İrem")
-# l1.addClass()
-# Log.addClass(Library_id=l1.BookID,Info='Book added',Name=l1.Addp,OldVersion=None,NewVersion=l1.BookName)
-
-def add(BookName,Yearofpublication,AuthorName,Category,Addp):
-    l1=Library(BookName,Yearofpublication,AuthorName,Category,Addp)
-    l1.addClass()
-    lg=Log(Library_id=l1.BookID,Info='Book added',Name=Addp,OldVersion=None,NewVersion=BookName)
-    lg.addClass()
-
-
-# add("Casper",1778,"John","Korku","İrem")
-# add("Sefiller",2000,"Victor Hugo","Dram","Berk")
-# add("1asd",2015,"Selena","Political","Fatma")
-# add("1asd",1990,"Mona","Bilim","Sena")

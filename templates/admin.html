@@ -18,7 +18,7 @@ body {
 
 h3,center,b{
 
-font-size: 40px;
+font-size: 50px;
 color:rgb(235, 213, 213);
 font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 
@@ -112,8 +112,11 @@ a {
 }
 
 
+
 </style>
 </head>
+
+
 
 <div class="navigation">
   
@@ -124,16 +127,14 @@ a {
   
 	</div>
 
-  
-
 <body>
 
-
-
-	<div style="margin-Top:95px;" class="container">
+	<div style="margin-Top:72px;" class="container">
 		<center><h3><b>LIBRARY</h3></b></center>
-		<a href="http://127.0.0.1:5000/log">Log records</a> 
-		 <hr>
+		<a href="http://127.0.0.1:5000/addBook" class="btn btn-danger" style="margin-left: 1150px;">ADD BOOKS</a>
+		<hr>
+	
+		
 	
 		 <table class="table">	
 		<table>
@@ -151,7 +152,7 @@ a {
 		</tr>
 
 		<tr>
-		<form  action="/admin" method="POST">
+		<!-- <form  action="/admin" method="POST">
 		   <div class="admins">
 		  {%for admin in admins%}
           <input type="radio" value={{admin.uye_kullaniciadi}} name="select" checked/>
@@ -159,11 +160,11 @@ a {
             </div>
 			{%endfor%}
 			<br>
-
-			<input type="submit" value="submit" href="http://127.0.0.1:5000/admin">
-		  </form>
-		  <div class="alert alert-primary" role="alert">
-			Welcome to admin page {{selectAdmin}},You can delete or update data.
+			<input type="submit" value="submit" href="http://127.0.0.1:5000/admin"><br>
+		  </form> -->
+		  <div class="alert alert-secondary" role="alert">
+			Welcome to admin page {{selectAdmin}}! You can add,delete or update data. To see <a href="http://127.0.0.1:5000/log" class="alert-link"> Log Records </a> 
+		  </div>
 	
 		{% for veri in books %}
 			<td>{{veri.BookID}}</td>
