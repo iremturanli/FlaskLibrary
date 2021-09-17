@@ -20,7 +20,7 @@
       }
       body{
           background-image:url("https://ffwallpaper.com/wallup/dark-space/dark-space-4.jpg");
-          opacity:0.6;
+          opacity:0.72;
 
       }
       h1 {
@@ -157,15 +157,13 @@
     <form class="main-block" method="post",action="/access">
 
         <div class="alert alert-danger" role="alert">
-            {{message}}
+            {{message}} {{name}}
             
         </div>
  
 
         <h1>Administrator Login</h1>
         <hr>
-        <label id="icon" for="name"><i class="fas fa-user"></i></label>
-        <input type="text" name="name" placeholder="Name" required/>
         <label id="icon" for="name"><i class="fas fa-unlock-alt"></i></label>
         <input type="password" name="psw" placeholder="Password" required/>
         <hr>

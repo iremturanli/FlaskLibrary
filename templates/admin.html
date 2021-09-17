@@ -163,10 +163,10 @@ a {
 			<input type="submit" value="submit" href="http://127.0.0.1:5000/admin"><br>
 		  </form> -->
 		  <div class="alert alert-secondary" role="alert">
-			Welcome to admin page {{selectAdmin}}! You can add,delete or update data. To see <a href="http://127.0.0.1:5000/log" class="alert-link"> Log Records </a> 
+			Welcome to admin page {{AdminName}}! You can add,delete or update data. To see <a href="http://127.0.0.1:5000/log" class="alert-link"> Log Records </a> 
 		  </div>
 	
-		{% for veri in books %}
+		{% for veri in Books %}
 			<td>{{veri.BookID}}</td>
 			<td>{{veri.BookName}}</td>
 			<td>{{veri.Yearofpublication}}</td>

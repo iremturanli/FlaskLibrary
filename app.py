@@ -1,18 +1,15 @@
-from flask import Flask,render_template,url_for,redirect
+from flask import Flask,render_template,url_for,redirect,session
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask import request
-from db.library import Library,Log,books,logrecords
+from db.library import Library,Log,Books,Logrecords
 import hashlib as hasher
-from flask_session import Session
+
 
 app=Flask(__name__)
+app.secret_key="irem"
 app.config['SQLALCHEMY_DATABASE_URI']='sqlite:////home/turkai/Masaüstü/workplace/Flask/library/flasklibrarymodify/db/library.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
-
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
 
 db=SQLAlchemy(app)
 
@@ -25,12 +22,15 @@ def index():
             password=request.form.get('passw')
             cikti=hasher.sha224(password.encode()).hexdigest()
 
+
             uye=Uye.query.filter_by(uye_kullaniciadi=name,uye_sifre=cikti).first()
 
             if uye.uye_kullaniciadi==name and uye.uye_sifre==cikti and uye.uye_durum==True:
-                return redirect(url_for('add'))
+                session["name"]=name
+                session["password"]=cikti
+                return redirect(url_for('books'))
             elif uye.uye_kullaniciadi==name and uye.uye_sifre==cikti and uye.uye_durum==False:
-                return render_template("adduser.html",books=books)
+                return render_template("booksUser.html",Books=Books)
 
             else:
                 message="Wrong username or password,Try again."
@@ -61,7 +61,7 @@ def signup():
             member.addClass()
 
             return render_template("signup.html",mesaj=mesaj)
-            #  return redirect(url_for('index'))
+          
 
         else:
             member.uye_durum=False
@@ -69,24 +69,23 @@ def signup():
             member.addClass()
 
             return render_template("signup.html",mesaj=mesaj)
-        #    return redirect(url_for('index'))
+
 
     else:
         return render_template("signup.html")
 
 
 
-@app.route("/add",methods=["GET"])
-def add():
+@app.route("/books",methods=["GET"])
+def books():
 
-    uyeler=Uye.query.all()
-    return render_template("add.html",books=books)
+    return render_template("books.html",Books=Books)
 
 
 
 @app.route("/log",methods=["GET","POST"])
 def log():
-    return render_template("log.html",logrecords=logrecords)
+    return render_template("log.html",Logrecords=Logrecords)
 
 
 @app.route("/access",methods=["GET","POST"])
@@ -95,38 +94,35 @@ def access():
     try:
         if request.method == 'POST':
 
-            name=request.form.get('name')
+            name=session.get("name")
             password=request.form.get('psw')
+        
             cikti=hasher.sha224(password.encode()).hexdigest()
 
             uye=Uye.query.filter_by(uye_kullaniciadi=name,uye_sifre=cikti).first()
-            if uye.uye_kullaniciadi==name and uye.uye_sifre==cikti and uye.uye_durum==True:
+            if uye.uye_kullaniciadi==name and uye.uye_sifre==session.get("password") and uye.uye_durum==True:
+
                 return redirect(url_for('admin'))
             else:
                 message="You do not have permission to access."
-                return render_template("access.html",message=message)
+                return render_template("access.html",message=message,name=name)
         else:
-            message="Welcome to admin page!"
-            return render_template("access.html",message=message)
+            name=session.get("name")
+            message="Welcome to admin page"
+            return render_template("access.html",message=message,name=name)
 
 
     except:
-         message="Wrong password or username."
-         return render_template('access.html',message=message)
+        name=session.get("name")
+        message="Wrong password or username."
+        return render_template('access.html',message=message)
 
 
 
 @app.route("/admin", methods=["POST","GET"])
-def admin():
-    admins=db.session.query(Uye).filter(Uye.uye_durum==True).all()
-
-    if request.method=="POST":
-        selectAdmin=request.form.get('select')
-        return render_template("admin.html",selectAdmin=selectAdmin,books=books)
- 
-
-
-    return render_template("admin.html",books=books,admins=admins)
+def admin():  
+    AdminName=session.get("name")
+    return render_template("admin.html",Books=Books,AdminName=AdminName)
 
 @app.route("/addBook",methods=["POST","GET"])
 def addBook():

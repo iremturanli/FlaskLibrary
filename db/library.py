@@ -60,6 +60,6 @@ class Log(db.Model):
 db.create_all()
 
 ##addhtmlye gonder
-books=Library.query.all()
-logrecords=Log.query.all()
+Books=Library.query.all()
+Logrecords=Log.query.all()
 
